@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Mouse Shadow</title>
+</head>
+<body>
+
+  <div class="hero">
+    <h1 contenteditable>🔥WOAH!</h1>
+  </div>
+
+  <style>
+  html {
+    color:black;
+    font-family: sans-serif;
+  }
+
+  body {
+    margin: 0;
+  }
+
+  .hero {
+    min-height: 100vh;
+    display:flex;
+    justify-content: center;
+    align-items: center;
+    color:black;
+  }
+
+  h1 {
+    text-shadow: 10px 10px 0 rgba(0,0,0,1);
+    font-size: 100px;
+  }
+  </style>
+
+<script>
+  const hero = document.querySelector('.hero');
+  const text = hero.querySelector('h1');
+
+  //'walk' refers to the max distance the shadow should stretch
+  const walk = 100; //100px
+
+  function shadow(e) {
+    // const width = hero.offsetWidth;
+    // const height = hero.offsetHeight;
+    //Same two lines as above using destructering
+    const { offsetWidth: width, offsetHeight: height } = hero;
+    
+    let { offsetX: x, offsetY: y } = e;
+    //console.log(x, y);
+
+    //x and y values reset as soon we hit any child elements
+    //inside or .hero div. to correct this:
+
+    if(this !== e.target) {
+      x = x + e.target.offsetLeft;
+      y = y + e.target.offsetTop;
+      //console.log(this);
+      //console.log(e.target);
+    }
+    
+    //We need to normalize our walk value to give us a positive and negative value to allow for top / bottom, left / right values. We are simply splitting our "walk" value in half and using Math.round to remove long integer values.
+    const xWalk = Math.round((x / width * walk) - (walk / 2));
+    const yWalk = Math.round((y / height * walk) - (walk / 2));
+    
+    //using one color / one shadow:
+    text.style.textShadow = `${xWalk}px ${yWalk}px 0 red`;
+    
+    //using multiple colors / multiple shadows:
+    text.style.textShadow = `
+      ${xWalk}px ${yWalk}px 0 rgba(255,0,255,0.7),
+      ${xWalk * -1}px ${yWalk}px 0 rgba(0,255,255,0.7),
+      ${yWalk}px ${xWalk * -1}px 0 rgba(0,255,0,0.7),
+      ${yWalk * -1}px ${xWalk}px 0 rgba(0,0,255,0.7)
+
+    `;
+  }
+
+  hero.addEventListener('mousemove', shadow);
+
+</script>
+</body>
+</html>
